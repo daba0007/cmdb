@@ -8,28 +8,6 @@ from models import System_info, Host
 from enum import Enum, unique
 
 
-class paramikoThreading(threading.Thread):
-    def __init__(self, command, host, username, password, port=22):
-        self.command = command
-        self.host = host
-        self.username = username
-        self.password = password
-        self.port = port
-        super(paramikoThreading, self).__init__()
-
-    def run(self):
-        ssh = paramiko.SSHClient()
-        # 创建一个ssh的白名单
-        know_host = paramiko.AutoAddPolicy()
-        # 加载创建的白名单
-        ssh.set_missing_host_key_policy(know_host)
-        # 连接服务器
-        ssh.connect(hostname=self.host, port=self.port, username=self.username, password=self.password)
-        stdin, stdout, stderr = ssh.exec_command(self.command)
-        ssh.close()
-        return stdout
-
-
 @unique
 class Command(Enum):
     """
@@ -81,10 +59,12 @@ class Session():
         self.host = Host.objects.get(ip=self.ip)
         self.uname = self.host.username
         self.pwd = self.host.password
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname=self.ip, port=22, username=self.uname, password=self.pwd)
-        self.session = ssh
+        self.session = paramiko.SSHClient()
+        self.session.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.session.connect(hostname=self.ip, port=22, username=self.uname, password=self.pwd, timeout=20)
+
+    def __del__(self):
+        self.session.close()
 
     def getHostname(self):
         stdin, stdout, stderr = self.session.exec_command(Command.hostname.value)

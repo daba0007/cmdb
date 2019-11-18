@@ -7,7 +7,7 @@ class System_info(models.Model):
     physical_cpu_num = models.IntegerField(verbose_name=u'物理CPU')
     logic_cpu_num = models.IntegerField(verbose_name=u'逻辑CPU')
     cpu_mode = models.CharField(max_length=30, verbose_name=u'CPU类型')
-    mem_num = models.IntegerField(verbose_name=u'内存')
+    mem_num = models.CharField(max_length=30, verbose_name=u'内存')
     disk_num = models.IntegerField(verbose_name=u'磁盘', default="")
     ip = models.CharField(max_length=30, verbose_name=u'IP')
     operator = models.CharField(max_length=30, verbose_name=u'责任人', default="")

@@ -35,6 +35,6 @@ def postHost(request):
     uname = request.POST.get('username', '')
     pwd = request.POST.get('password', '')
     Client(ip=ip, uname=uname, pwd=pwd)
-    session= Session(ip=ip)
+    session = Session(ip=ip)
     session.setHost()
     return HttpResponse(json.dumps({"info": "success"}))
